@@ -1,5 +1,4 @@
 #pragma once
-#include "processing.h"
 
 template<typename It>
 class Flowiterator {
@@ -28,5 +27,5 @@ auto AsDataFlow(Container& container) {
 
 template<typename Container>
 auto AsDataFlow(const Container& container) {
-    return Flowiterator(container.begin(), container.end());
+    return Flowiterator(container.cbegin(), container.cend());
 }

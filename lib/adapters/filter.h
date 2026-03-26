@@ -1,5 +1,5 @@
 #pragma once
-#include "processing.h"
+
 #include <optional>
 
 template<typename Flow, typename Pred>
@@ -7,12 +7,12 @@ class FilterFlow {
 public:
     using value_type = typename Flow::value_type;
 
-    FilterFlow(Flow flow, Pred pred) : flow_(std::move(flow)) pred_(std::move(pred)) {}
+    FilterFlow(Flow flow, Pred pred) : flow_(std::move(flow)), pred_(std::move(pred)) {}
 
-    std::optional<value_type Next() {
+    std::optional<value_type> Next() {
 
         while(true) {
-            std::optional<value_type> v = flow_.Next();
+            auto v = flow_.Next();
             if (!v) return std::nullopt;
             if (pred_(*v)) return v;
         }

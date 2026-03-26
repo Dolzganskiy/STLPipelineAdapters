@@ -1,23 +1,22 @@
 #pragma once
-#include "processing.h"
 
 #include <vector>
 
 class AsVectorAdapter {
-
+public:
     template<typename Flow>
     std::vector<typename Flow::value_type> operator()(Flow flow) {
         std::vector<typename Flow::value_type> result;
+        
         while (true) {
-            if (!flow.Next()) break;
-            result.push_back(flow.Next());
+            auto v = flow.Next();
+            if (!v) break;
+            result.push_back(*v);
         }
         return result;
     }
 };
 
-
-template<typename T>
 auto AsVector() {
-    return AsVectorAdapter()
+    return AsVectorAdapter();
 }
