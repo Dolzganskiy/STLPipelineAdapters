@@ -25,9 +25,7 @@ public:
     std::optional<value_type> Next() {
         while (true) {
             auto v = flow_.Next();
-
             if (!v) return std::nullopt;
-
             if (*v) return **v;
         }
     }

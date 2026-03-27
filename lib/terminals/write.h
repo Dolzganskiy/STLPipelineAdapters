@@ -23,5 +23,5 @@ private:
 
 template<typename Delimiter>
 auto Write(std::ostream& os, Delimiter del) {
-    return WriteAdapter(os, std::move(del));
+    return WriteAdapter(os, del);
 }
