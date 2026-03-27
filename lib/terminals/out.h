@@ -17,6 +17,6 @@ private:
     std::ostream& os_;
 };
 
-auto Out(std::ostream& os) {
+inline auto Out(std::ostream& os) {
     return OutAdapter(os);
 }

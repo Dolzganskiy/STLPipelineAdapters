@@ -9,10 +9,10 @@ public:
     WriteAdapter(std::ostream& os, Delimiter del) : os_(os), del_(std::move(del)) {}
 
     template<typename Flow>
-    bool operator()(Flow flow) {
+    void operator()(Flow flow) {
         while(true) {
             auto v = flow.Next();
-            if (!v) return true;
+            if (!v) return;
             os_ << *v << del_;
         }
     }
@@ -22,6 +22,6 @@ private:
 };
 
 template<typename Delimiter>
-auto Write(std::ostream& os, Delimiter del) {
+inline auto Write(std::ostream& os, Delimiter del) {
     return WriteAdapter(os, del);
 }

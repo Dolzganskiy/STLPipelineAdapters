@@ -1,9 +1,11 @@
 #pragma once
+#include<optional>
+#include<iterator>
+#include"../flowiterator.h"
 
 template<typename It>
-class Flowiterator {
+class Flowiterator : public FlowRangeMixin<Flowiterator<It>> {
 public:
-
     using value_type = typename std::iterator_traits<It>::value_type;
 
     Flowiterator(It cur, It end) : current_(cur), end_(end) {}
@@ -21,11 +23,11 @@ private:
 };
 
 template<typename Container>
-auto AsDataFlow(Container& container) {
+inline auto AsDataFlow(Container& container) {
     return Flowiterator(container.begin(), container.end());
 }
 
 template<typename Container>
-auto AsDataFlow(const Container& container) {
+inline auto AsDataFlow(const Container& container) {
     return Flowiterator(container.cbegin(), container.cend());
 }

@@ -17,6 +17,6 @@ public:
     }
 };
 
-auto AsVector() {
+inline auto AsVector() {
     return AsVectorAdapter();
 }

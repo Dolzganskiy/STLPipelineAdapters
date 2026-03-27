@@ -1,7 +1,11 @@
 #pragma once
+#include <optional>
+#include <utility>
+#include <type_traits>
+#include "../flowiterator.h"
 
 template<typename Flow, typename Func>
-class TransformFlow {
+class TransformFlow : public FlowRangeMixin<TransformFlow<Flow, Func>> {
 public:
     using input_type = typename Flow::value_type;
     using value_type = std::invoke_result_t<Func, input_type>;
@@ -33,6 +37,6 @@ private:
 };
 
 template<typename Func>
-auto Transform(Func func) {
+inline auto Transform(Func func) {
     return TransformAdapter<Func>(func);
 }
