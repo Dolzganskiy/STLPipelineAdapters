@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "pipeline_op.h"
-#include "range-based_for.h"
+#include "flowiterator.h"
 
 #include "sources/as_data_flow.h"
 #include "sources/dir.h"
