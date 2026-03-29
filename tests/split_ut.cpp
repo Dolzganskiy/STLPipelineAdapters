@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 
+
 TEST(ReadTest, ByNewLine) {
     std::vector<std::stringstream> files(2);
     files[0] << "1\n2\n3\n4\n5";
@@ -21,3 +22,4 @@ TEST(ReadTest, BySpace) {
     auto result = AsDataFlow(files) | Split(" ") | AsVector();
     ASSERT_THAT(result, testing::ElementsAre("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
 }
+

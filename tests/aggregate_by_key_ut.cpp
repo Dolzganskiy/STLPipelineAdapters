@@ -20,7 +20,7 @@ TEST(AggregateByKeyTest, CountingAggregatedValues) {
     std::vector<std::string> input = {"name4", "name0", "name1", "name0", "name2", "name0", "name1"};
 
     auto result =
-        AsDataFlow(input)
+        AsDataFlow(input)   
             | AggregateByKey(
                 std::size_t{0},
                 [](const std::string&, std::size_t& accumulated) { ++accumulated; },

@@ -25,6 +25,7 @@ add_executable(
     split_ut.cpp
     transform_ut.cpp
     write_ut.cpp
+    my_tests_ut.cpp
 )
 
 target_link_libraries(
