@@ -1,6 +1,11 @@
 #pragma once
+#include <filesystem>
+#include <optional>
+#include <string>
+#include <utility>
 #include <variant>
 
+#include "../flowiterator.h"
 
 class DirFlowIterator : public FlowRangeMixin<DirFlowIterator> {
 public:
@@ -8,7 +13,7 @@ public:
 
     DirFlowIterator(std::string path, bool recursive) 
         : recursive_(recursive) {
-        if (recursive) {
+        if (recursive_) {
             it_ = std::filesystem::recursive_directory_iterator(path);
         } else {
             it_ = std::filesystem::directory_iterator(path);
@@ -18,13 +23,13 @@ public:
     std::optional<value_type> Next() {
         if (recursive_) {
             auto& it = std::get<std::filesystem::recursive_directory_iterator>(it_);
-            if (it == std::filesystem::recursive_directory_iterator()) return std::nullopt;
+            if (it == std::filesystem::recursive_directory_iterator{}) return std::nullopt;
             auto result = it->path();
             ++it;
             return result;
         }
         auto& it = std::get<std::filesystem::directory_iterator>(it_);
-        if (it == std::filesystem::directory_iterator()) return std::nullopt;
+        if (it == std::filesystem::directory_iterator{}) return std::nullopt;
         auto result = it->path();
         ++it;
         return result;
