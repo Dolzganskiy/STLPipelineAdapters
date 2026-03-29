@@ -1,18 +1,23 @@
 #pragma once
 #include <fstream>
 
+#include "../unwrap.h"
+
 class OutAdapter {
 public:
-    OutAdapter(std::ostream& os) : os_(os) {}
+    explicit OutAdapter(std::ostream& os) : os_(os) {}
 
     template<typename Flow>
-    void operator()(Flow flow) {
+    void operator()(Flow flow) const {
         while (true) {
             auto v = flow.Next();
-            if (!v) return;
-            os_ << *v;
+            if (!v) {
+                return;
+            }
+            os_ << Unwrap(*v);
         }
     }
+
 private:
     std::ostream& os_;
 };

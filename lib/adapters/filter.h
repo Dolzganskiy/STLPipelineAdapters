@@ -2,6 +2,7 @@
 #include <utility>
 #include <optional>
 #include "../flowiterator.h"
+#include "../unwrap.h"
 
 template<typename Flow, typename Pred>
 class FilterFlow : public FlowRangeMixin<FilterFlow<Flow, Pred>>{
@@ -15,7 +16,7 @@ public:
         while(true) {
             auto v = flow_.Next();
             if (!v) return std::nullopt;
-            if (pred_(*v)) return v;
+            if (pred_(Unwrap(*v))) return v;
         }
     }
 private:
@@ -26,10 +27,10 @@ private:
 template<typename Pred>
 class FilterAdapter {
 public:
-    FilterAdapter(Pred pred) : pred_(pred) {}
+    explicit FilterAdapter(Pred pred) : pred_(std::move(pred)) {}
 
     template<typename Flow>
-    auto operator()(Flow flow) {
+    auto operator()(Flow flow) const {
         return FilterFlow<Flow, Pred>(std::move(flow), pred_);
     }
 
@@ -39,5 +40,5 @@ private:
 
 template<typename Pred>
 inline auto Filter(Pred pred) {
-    return FilterAdapter<Pred>(pred);
+    return FilterAdapter<Pred>(std::move(pred));
 }

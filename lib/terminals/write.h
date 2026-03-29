@@ -1,21 +1,24 @@
 #pragma once
 #include <iostream>
+#include <utility>
 
-#include <fstream>
+#include "../unwrap.h"
 
 template<typename Delimiter>
 class WriteAdapter {
 public:
-    WriteAdapter(std::ostream& os, Delimiter del) : os_(os), del_(std::move(del)) {}
+    WriteAdapter(std::ostream& os, Delimiter del)
+        : os_(os), del_(std::move(del)) {}
 
     template<typename Flow>
-    void operator()(Flow flow) {
-        while(true) {
+    void operator()(Flow flow) const {
+        while (true) {
             auto v = flow.Next();
             if (!v) return;
-            os_ << *v << del_;
+            os_ << Unwrap(*v) << del_;
         }
     }
+
 private:
     std::ostream& os_;
     Delimiter del_;
@@ -23,5 +26,5 @@ private:
 
 template<typename Delimiter>
 inline auto Write(std::ostream& os, Delimiter del) {
-    return WriteAdapter(os, del);
+    return WriteAdapter<Delimiter>(os, std::move(del));
 }
