@@ -19,48 +19,45 @@ public:
 
     std::optional<value_type> Next() {
         while (true) {
-            if (has_current_) {
-                skip_delims();
-                if (pos_ < current_.size()) {
-                    std::size_t start = pos_;
-                    while (pos_ < current_.size() && !is_delim(current_[pos_])) {
-                        ++pos_;
-                    }
-                    return current_.substr(start, pos_ - start);
+            if (!current_file_ || !(*current_file_)) {
+                auto next_file = flow_.Next();
+                if (!next_file) {
+                    return std::nullopt;
                 }
-                has_current_ = false;
+                current_file_ = *next_file;
             }
 
-            auto next_chunk = flow_.Next();
-            if (!next_chunk) {
-                return std::nullopt;
+            std::string token;
+            char ch;
+
+            while (current_file_ && current_file_->get(ch)) {
+                if (is_delim(ch)) {
+                    if (!token.empty()) {
+                        return token;
+                    }
+                } else {
+                    token.push_back(ch);
+                }
             }
 
-            current_ = *next_chunk;
-            pos_ = 0;
-            has_current_ = true;
-        }
-    }
+            if (!token.empty()) {
+                return token;
+            }
 
-private:
-    bool is_delim(char c) const {
-        return delims_.find(c) != std::string::npos;
-    }
-
-    void skip_delims() {
-        while (pos_ < current_.size() && is_delim(current_[pos_])) {
-            ++pos_;
+            current_file_.reset();
         }
     }
 
 private:
     Flow flow_;
     std::string delims_;
+    std::shared_ptr<std::ifstream> current_file_;
 
-    std::string current_;
-    std::size_t pos_ = 0;
-    bool has_current_ = false;
+    bool is_delim(char c) const {
+        return delims_.find(c) != std::string::npos;
+    }
 };
+
 
 class SplitAdapter {
 public:

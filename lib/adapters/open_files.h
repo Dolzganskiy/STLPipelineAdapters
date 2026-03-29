@@ -11,7 +11,7 @@ template<typename Flow>
 class OpenFilesFlow : public FlowRangeMixin<OpenFilesFlow<Flow>> {
 public:
     using input_type = typename Flow::value_type;
-    using value_type = std::string;
+    using value_type = std::shared_ptr<std::ifstream>;
 
     explicit OpenFilesFlow(Flow flow) : flow_(std::move(flow)) {}
 
@@ -20,11 +20,10 @@ public:
             auto v = flow_.Next();
             if (!v) return std::nullopt;
 
-            std::ifstream file(*v);
-            if (!file.is_open()) continue;
-            std::ostringstream buffer;
-            buffer << file.rdbuf();
-            return buffer.str();
+            auto file = std::make_shared<std::ifstream>(*path);
+            if (file->is_open()) {
+                return file;
+            }
         }
     }
     
