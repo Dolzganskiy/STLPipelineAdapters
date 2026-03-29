@@ -13,7 +13,7 @@ template<typename Flow>
 class SplitFlow : public FlowRangeMixin<SplitFlow<Flow>> {
 public:
     using input_type = typename Flow::value_type;
-    using source_type = std::remove_cvref_t<decltype(Unwrap(std::declval<input_type>()))>;
+    using source_type = std::remove_cvref_t<decltype(Unwrap(std::declval<input_type&>()))>;
     using value_type = std::string;
 
     SplitFlow(Flow flow, std::string delims)
@@ -44,21 +44,30 @@ private:
                 has_current_string_ = true;
             }
 
-            while (pos_ < current_string_.size() && is_delim(current_string_[pos_])) {
+            if (pos_ > current_string_.size()) {
+                has_current_string_ = false;
+                current_string_.clear();
+                pos_ = 0;
+                continue;
+            }
+
+            std::size_t start = pos_;
+
+            while (pos_ < current_string_.size() && !is_delim(current_string_[pos_])) {
                 ++pos_;
             }
 
-            if (pos_ < current_string_.size()) {
-                std::size_t start = pos_;
-                while (pos_ < current_string_.size() && !is_delim(current_string_[pos_])) {
-                    ++pos_;
-                }
-                return current_string_.substr(start, pos_ - start);
+            std::string token = current_string_.substr(start, pos_ - start);
+
+            if (pos_ < current_string_.size() && is_delim(current_string_[pos_])) {
+                ++pos_;
+            } else if (pos_ == current_string_.size()) {
+                has_current_string_ = false;
+                current_string_.clear();
+                pos_ = 0;
             }
 
-            current_string_.clear();
-            pos_ = 0;
-            has_current_string_ = false;
+            return token;
         }
     }
 
@@ -77,16 +86,14 @@ private:
 
             while (current_stream_->get(ch)) {
                 if (is_delim(ch)) {
-                    if (!token.empty()) {
-                        return token;
-                    }
-                } else {
-                    token.push_back(ch);
+                    return token;   // даже если token пустой
                 }
+                token.push_back(ch);
             }
 
-            if (!token.empty()) {
-                return token;
+            if (current_stream_->eof()) {
+                current_stream_ = nullptr;
+                return token;       // вернуть последний токен, даже пустой
             }
 
             current_stream_ = nullptr;

@@ -11,7 +11,7 @@ template<typename Flow, typename Func>
 class TransformFlow : public FlowRangeMixin<TransformFlow<Flow, Func>> {
 public:
     using input_type = typename Flow::value_type;
-    using unwrapped_input_type = decltype(Unwrap(std::declval<input_type>()));
+    using unwrapped_input_type = decltype(Unwrap(std::declval<input_type&>()));
     using value_type = std::invoke_result_t<Func, unwrapped_input_type>;
 
     TransformFlow(Flow flow, Func func) 
