@@ -86,14 +86,14 @@ private:
 
             while (current_stream_->get(ch)) {
                 if (is_delim(ch)) {
-                    return token;   // даже если token пустой
+                    return token;
                 }
                 token.push_back(ch);
             }
 
             if (current_stream_->eof()) {
                 current_stream_ = nullptr;
-                return token;       // вернуть последний токен, даже пустой
+                return token;
             }
 
             current_stream_ = nullptr;

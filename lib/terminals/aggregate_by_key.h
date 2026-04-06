@@ -13,7 +13,7 @@ template<typename Init, typename Aggregator, typename KeySelector, typename Flow
 class AggregateByKeyFlow : public FlowRangeMixin<AggregateByKeyFlow<Init, Aggregator, KeySelector, Flow>> {
 public:
     using input_type = typename Flow::value_type;
-    using unwrapped_input_type = decltype(Unwrap(std::declval<input_type>()));
+    using unwrapped_input_type = decltype(Unwrap(std::declval<input_type&>()));
     using key_type = std::remove_cvref_t<std::invoke_result_t<KeySelector, unwrapped_input_type>>;
     using value_type = std::pair<key_type, Init>;
     using Iterator = typename std::vector<value_type>::iterator;

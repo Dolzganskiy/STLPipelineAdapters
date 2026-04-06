@@ -16,8 +16,8 @@ public:
     using left_input_type = typename Left::value_type;
     using right_input_type = typename Right::value_type;
 
-    using left_value_type = std::remove_cvref_t<decltype(Unwrap(std::declval<left_input_type>()))>;
-    using right_value_type = std::remove_cvref_t<decltype(Unwrap(std::declval<right_input_type>()))>;
+    using left_value_type = std::remove_cvref_t<decltype(Unwrap(std::declval<left_input_type&>()))>;
+    using right_value_type = std::remove_cvref_t<decltype(Unwrap(std::declval<right_input_type&>()))>;
 
     using left_key_type = std::remove_cvref_t<std::invoke_result_t<LKeySel, left_value_type>>;
     using right_key_type = std::remove_cvref_t<std::invoke_result_t<RKeySel, right_value_type>>;
